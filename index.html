@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Shantamap</title>
   <style>
     * { cursor: none; margin: 0; padding: 0; }
@@ -76,10 +77,25 @@
       ctx.fill();
     }
 
+    // mouse events (desktop)
     canvas.addEventListener('mousedown', (e) => { isScratching = true; scratch(e.offsetX, e.offsetY); });
     canvas.addEventListener('mousemove', (e) => { if (isScratching) scratch(e.offsetX, e.offsetY); });
     canvas.addEventListener('mouseup',   () => { isScratching = false; });
     canvas.addEventListener('mouseleave',() => { isScratching = false; });
+
+    // touch events (mobile)
+    canvas.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      scratch(touch.clientX - rect.left, touch.clientY - rect.top);
+    });
+    canvas.addEventListener('touchmove', (e) => {
+      e.preventDefault();
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      scratch(touch.clientX - rect.left, touch.clientY - rect.top);
+    });
   </script>
 
 </body>
