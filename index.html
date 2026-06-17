@@ -4,38 +4,82 @@
   <meta charset="UTF-8">
   <title>Shantamap</title>
   <style>
-    * { cursor: none; } /* hide the real cursor */
+    * { cursor: none; margin: 0; padding: 0; }
 
     #cursor {
       position: fixed;
       width: 120px;
       height: 120px;
-      pointer-events: none; /* so it doesn't block clicks */
+      pointer-events: none;
       transform: translate(-50%, -50%);
       z-index: 9999;
     }
-    
-    body {
-  background-image: url('IMG_5519.PNG');
-  background-size: cover;
-  background-position: top center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  margin: 0;
-}
+
+    #container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    #bottom {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+    }
+
+    #scratch-canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+    }
   </style>
 </head>
 <body>
 
+  <div id="container">
+    <img id="bottom" src="colorful-map.png">
+    <canvas id="scratch-canvas"></canvas>
+  </div>
+
   <img id="cursor" src="Bazaart_0AD2EE60-5C92-4C4F-B3AD-A88370CA3B62.PNG">
 
   <script>
+    // custom cursor (your original code)
     const cursor = document.getElementById('cursor');
-
     document.addEventListener('mousemove', (e) => {
       cursor.style.left = e.clientX + 'px';
       cursor.style.top  = e.clientY + 'px';
     });
+
+    // scratch map
+    const canvas = document.getElementById('scratch-canvas');
+    const ctx = canvas.getContext('2d');
+
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const goldMap = new Image();
+    goldMap.src = 'IMG_5519.PNG';
+    goldMap.onload = () => {
+      ctx.drawImage(goldMap, 0, 0, canvas.width, canvas.height);
+    };
+
+    let isScratching = false;
+
+    function scratch(x, y) {
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.beginPath();
+      ctx.arc(x, y, 30, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    canvas.addEventListener('mousedown', (e) => { isScratching = true; scratch(e.offsetX, e.offsetY); });
+    canvas.addEventListener('mousemove', (e) => { if (isScratching) scratch(e.offsetX, e.offsetY); });
+    canvas.addEventListener('mouseup',   () => { isScratching = false; });
+    canvas.addEventListener('mouseleave',() => { isScratching = false; });
   </script>
 
 </body>
